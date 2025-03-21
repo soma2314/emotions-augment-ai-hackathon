@@ -1,8 +1,10 @@
 import eventlet
 eventlet.monkey_patch()  # Fix WebSocket issues
 import re
-from flask_cors import CORS 
 from  utils.predictMoodUtils import predict_emotion_util 
+from flask_cors import CORS 
+from flask import request
+
 
 import json
 import base64
@@ -20,11 +22,11 @@ app = Flask(__name__)
 CORS(app, resources={
     r"/*": {
         "origins": [
-            "http://localhost:5173",  # Vite dev server
+            "http://localhost:5173",  
             "http://localhost:3000",
             "https://disease-prediction-app.vercel.app/",
-            "https://disease-prediction-app.vercel.app"  # Replace with your actual frontend domain,
-                "*",
+            "https://disease-prediction-app.vercel.app",
+            "https://emotions-augment-ai-hackathon.vercel.app"  # Add this domain
         ],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
@@ -33,24 +35,31 @@ CORS(app, resources={
         "max_age": 600
     }
 })
-socketio = SocketIO(app, cors_allowed_origins="*")
+
+socketio = SocketIO(app, cors_allowed_origins=[
+    "http://localhost:5173",  
+    "http://localhost:3000",
+    "https://disease-prediction-app.vercel.app",
+    "https://emotions-augment-ai-hackathon.vercel.app"  # Add frontend
+])
+
 @app.after_request
 def after_request(response):
-    allowed_origins = ['http://localhost:5173', 
-                      'https://disease-prediction-app.vercel.app']
+    allowed_origins = [
+        'http://localhost:5173',  
+        "http://localhost:3000",
+        'https://disease-prediction-app.vercel.app',
+        'https://emotions-augment-ai-hackathon.vercel.app'  # Allow frontend domain
+    ]
+    
     origin = request.headers.get('Origin')
     if origin in allowed_origins:
         response.headers.add('Access-Control-Allow-Origin', origin)
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response
-
- 
-
-@app.route('/hello')
-def home():
-    return "Hello Welcome voice emotion detection"
 
 # Set API Keys
 ASSEMBLY_AI_KEY = "e90167029f9d49e88511ee744d519ccc"
