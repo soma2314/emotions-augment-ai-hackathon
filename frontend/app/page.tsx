@@ -51,7 +51,7 @@ export default function Home() {
     setRecordingHistory([]);
   }
   useEffect(() => {
-    const newSocket = io("https://aug-back-deploy-production.up.railway.app/");
+    const newSocket = io("https://emotions-augment-ai-hackathon-theta.vercel.app/");
 
     newSocket.on("connect", () => {
       console.log("✅ Socket.IO Connected");
