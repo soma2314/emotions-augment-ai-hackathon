@@ -51,7 +51,7 @@ export default function Home() {
     setRecordingHistory([]);
   }
   useEffect(() => {
-    const newSocket = io("https://emotions-augment-ai-hackathon-theta.vercel.app/");
+    const newSocket = io("https://emotion-backend-final-production.up.railway.app/");
 
     newSocket.on("connect", () => {
       console.log("✅ Socket.IO Connected");
